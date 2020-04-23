@@ -8,7 +8,8 @@ usage: train.py [-h] [--debug] [--checkpoint CHECKPOINT] [--basenet BASENET]
                 [--background-weight BACKGROUND_WEIGHT]
                 [--paf-multiplicity-correction]
                 [--paf-independence-scale PAF_INDEPENDENCE_SCALE]
-                [--margin-loss] [--pif-side-length PIF_SIDE_LENGTH]
+                [--margin-loss] [--auto-tune-mtl]
+                [--pif-side-length PIF_SIDE_LENGTH]
                 [--paf-min-size PAF_MIN_SIZE] [--paf-fixed-size]
                 [--paf-aspect-ratio PAF_ASPECT_RATIO] [--momentum MOMENTUM]
                 [--beta2 BETA2] [--adam-eps ADAM_EPS] [--no-nesterov]
@@ -102,6 +103,7 @@ losses:
                         [experimental] linear length scale of independence for
                         PAF regression (default: 3.0)
   --margin-loss         [experimental] (default: False)
+  --auto-tune-mtl       [experimental] (default: False)
 
 pif encoder:
   --pif-side-length PIF_SIDE_LENGTH
@@ -133,9 +135,9 @@ learning rate scheduler:
                         [])
   --lr-burn-in-epochs LR_BURN_IN_EPOCHS
                         number of epochs at the beginning with lower learning
-                        rate (default: 3)
+                        rate (default: 2)
   --lr-burn-in-factor LR_BURN_IN_FACTOR
-                        learning pre-factor during burn-in (default: 0.01)
+                        learning pre-factor during burn-in (default: 0.001)
   --lr-gamma LR_GAMMA   learning rate decay factor (default: 0.1)
 
 dataset and loader:

@@ -57,6 +57,10 @@ class Shell(torch.nn.Module):
 
         return head_outputs
 
+class DecoderShell(torch.nn.Module):
+    pass
+
+
 
 class Shell2Scale(torch.nn.Module):
     def __init__(self, base_net, head_nets, *,

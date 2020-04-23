@@ -34,7 +34,7 @@ class Paf(object):
                          v_threshold=self.v_threshold,
                          fixed_size=self.fixed_size,
                          aspect_ratio=self.aspect_ratio,
-                         sigmas=self.sigmas)
+                         sigmas=self.sigmas, anns=anns)
         f.init_fields(bg_mask)
         f.fill(keypoint_sets)
         return f.fields(valid_area)
@@ -42,7 +42,8 @@ class Paf(object):
 
 class PafGenerator(object):
     def __init__(self, min_size, skeleton, *,
-                 v_threshold, fixed_size, aspect_ratio, sigmas, padding=10):
+                 v_threshold, fixed_size, aspect_ratio, sigmas, padding=10, anns=None):
+        self.anns = anns
         self.min_size = min_size
         self.skeleton = skeleton
         self.v_threshold = v_threshold
@@ -200,6 +201,9 @@ class PafGenerator(object):
         fields_reg2 = self.fields_reg2[:, :, p:-p, p:-p]
         fields_scale1 = self.fields_scale1[:, p:-p, p:-p]
         fields_scale2 = self.fields_scale2[:, p:-p, p:-p]
+
+        np.save(f"intermediate_results/paf_reg1_{self.anns[0]['image_id']}", fields_reg1)
+        np.save(f"intermediate_results/paf_reg2_{self.anns[0]['image_id']}", fields_reg2)
 
         mask_valid_area(intensities, valid_area)
 
