@@ -4,7 +4,6 @@ import torchvision
 
 from . import basenetworks, heads
 from ..data import COCO_KEYPOINTS, COCO_PERSON_SKELETON, DENSER_COCO_PERSON_CONNECTIONS, HFLIP
-
 # generate hash values with: shasum -a 256 filename.pkl
 
 RESNET18_MODEL = ('http://github.com/vita-epfl/openpifpaf-torchhub/releases/download/'
@@ -41,6 +40,11 @@ class Shell(torch.nn.Module):
         ]
         self.process_heads = process_heads
         self.cross_talk = cross_talk
+        # self.decoder = heads.CompositeField('MidRangeOffsetDecoder', n_features,
+        #                       n_fields=n_fields,
+        #                       n_confidences=1,
+        #                       n_vectors=n_vectors,
+        #                       n_scales=n_scales)
 
     def forward(self, *args):
         image_batch = args[0]
@@ -54,6 +58,20 @@ class Shell(torch.nn.Module):
 
         if self.process_heads is not None:
             head_outputs = self.process_heads(*head_outputs)
+
+        merged_results = []
+        for output in head_outputs:
+            reshaped_output = None
+            if len(output.shape) == 4:
+                reshaped_output = output.permute(0, 2, 3, 1).contiguous().view(64, 51, 51, -1)
+            elif len(output.shape) == 5:
+                reshaped_output = output.permute(0, 3, 4, 1, 2).contiguous().view(64, 51, 51, -1)
+            if reshaped_output is not None:
+                merged_results.append(reshaped_output)
+            else:
+                print(f"Unexpected output shape {output.shape}")
+        merged_head_outputs = torch.cat(merged_results, dim=3).permute(64, -1, 51, 51)
+
 
         return head_outputs
 
