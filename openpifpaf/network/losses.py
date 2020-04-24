@@ -228,6 +228,9 @@ class CompositeLoss(torch.nn.Module):
         x_intensity = x[0]
         x_regs = x[1:1 + self.n_vectors]
         x_spreads = x[1 + self.n_vectors:1 + 2 * self.n_vectors]
+        if len(x_spreads) == 0:
+            x_spreads = [1] * self.n_vectors
+
         x_scales = []
         if self.n_scales:
             x_scales = x[1 + 2 * self.n_vectors:1 + 2 * self.n_vectors + self.n_scales]
@@ -371,6 +374,8 @@ def loss_parameters(head_name):
         n_vectors = 1
     elif 'paf' in head_name:
         n_vectors = 2
+    elif 'mro' in head_name:
+        n_vectors = 2
 
     n_scales = None
     if 'pif' in head_name:
@@ -378,6 +383,8 @@ def loss_parameters(head_name):
     elif 'pafs' in head_name:
         n_scales = 2
     elif 'paf' in head_name:
+        n_scales = 0
+    elif 'mro' in head_name:
         n_scales = 0
 
     return {

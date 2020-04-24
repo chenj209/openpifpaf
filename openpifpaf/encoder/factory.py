@@ -47,7 +47,6 @@ def factory_heads(headnames, strides):
                 for head_name, stride in zip(headnames, strides)]
     if headnames[-1] == 'skeleton' and len(headnames) == len(strides) + 1:
         encoders.append(Skeleton())
-    encoders.append(MidRangeOffset(strides[0], n_keypoints=17, skeleton=COCO_PERSON_SKELETON, sigmas=COCO_PERSON_SIGMAS))
     return encoders
 
 
