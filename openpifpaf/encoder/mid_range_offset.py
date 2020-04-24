@@ -223,7 +223,7 @@ class MidRangeOffsetGenerator(object):
         # fields_scale2 = self.fields_scale2[:, p:-p, p:-p]
         # plt.quiver(fields_reg1[0, 0, :, :], fields_reg1[0, 1, :, :])
         # plt.show()
-        np.save(f"intermediate_results/mid_range_offset_{self.anns[0]['image_id']}", fields_reg1)
+        # np.save(f"intermediate_results/mid_range_offset_{self.anns[0]['image_id']}", fields_reg1)
         # mask_valid_area(intensities, valid_area)
 
         return (

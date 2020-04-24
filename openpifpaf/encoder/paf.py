@@ -202,8 +202,8 @@ class PafGenerator(object):
         fields_scale1 = self.fields_scale1[:, p:-p, p:-p]
         fields_scale2 = self.fields_scale2[:, p:-p, p:-p]
 
-        np.save(f"intermediate_results/paf_reg1_{self.anns[0]['image_id']}", fields_reg1)
-        np.save(f"intermediate_results/paf_reg2_{self.anns[0]['image_id']}", fields_reg2)
+        # np.save(f"intermediate_results/paf_reg1_{self.anns[0]['image_id']}", fields_reg1)
+        # np.save(f"intermediate_results/paf_reg2_{self.anns[0]['image_id']}", fields_reg2)
 
         mask_valid_area(intensities, valid_area)
 
