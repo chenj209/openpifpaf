@@ -71,7 +71,7 @@ class MidRangeOffsetGenerator(object):
         field_w, field_h = width_height_original
         # field_w = bg_mask.shape[1] + 2 * self.padding
         # field_h = bg_mask.shape[0] + 2 * self.padding
-        self.intensities = np.zeros((n_fields, field_h, field_w), dtype=np.float32)
+        self.intensities = np.zeros((n_fields + 1, field_h, field_w), dtype=np.float32)
         self.fields_reg1 = np.zeros((n_fields, 2, field_h, field_w), dtype=np.float32)
         # self.fields_reg2 = np.zeros((n_fields, 2, field_h, field_w), dtype=np.float32)
         # self.fields_reg1[:, 2:] = np.inf

@@ -40,7 +40,7 @@ class Shell(torch.nn.Module):
         ]
         self.process_heads = process_heads
         self.cross_talk = cross_talk
-        self.decoder = heads.MidRangeOffsetDecoder(head_names)
+        self.decoder = heads.MidRangeOffsetDecoder(head_names, 19)
 
     def forward(self, *args):
         image_batch = args[0]
