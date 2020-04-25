@@ -188,7 +188,8 @@ class MidRangeOffsetGenerator(object):
         # joint1_offset = (joint1[:2] - fxy).reshape(2, 1, 1)
         joint2_offset = (np.round(joint2[:2]) - fxy)
 
-        # update intensity        self.intensities[i, int(fxy[1]), int(fxy[0])] = 1.0
+        # update intensity
+        self.intensities[i, int(fxy[1]), int(fxy[0])] = 1.0
 
         # update regressions
         # sink1 = sink + joint1_offset
