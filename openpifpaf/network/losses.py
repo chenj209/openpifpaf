@@ -229,7 +229,7 @@ class CompositeLoss(torch.nn.Module):
         x_regs = x[1:1 + self.n_vectors]
         x_spreads = x[1 + self.n_vectors:1 + 2 * self.n_vectors]
         if len(x_spreads) == 0:
-            x_spreads = [torch.ones(x_intensity.shape)] * self.n_vectors
+            x_spreads = [torch.ones(x_intensity.shape).to(device=torch.device('cuda'))] * self.n_vectors
 
         x_scales = []
         if self.n_scales:
