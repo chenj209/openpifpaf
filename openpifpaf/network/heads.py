@@ -105,6 +105,29 @@ class PafHFlip(torch.nn.Module):
 
         return out
 
+class MidRangeOffsetDecoder(torch.nn.Module):
+    def __init__(self, head_names):
+        super(MidRangeOffsetDecoder, self).__init__()
+        input_features = 0
+        if head_names is None:
+            head_names = ['pif', 'paf']
+        for head_name in head_names:
+            if head_name == 'pif':
+                input_features += 17 * 5
+            elif head_name == 'paf':
+                input_features += 19 * 7
+        self.upsample1 = torch.nn.ConvTranspose2d(input_features, input_features // 2, 3, stride=2, padding=1)
+        input_features = input_features // 2
+        self.upsample2 = torch.nn.ConvTranspose2d(input_features, input_features // 2, 3, stride=2, padding=1)
+        input_features = input_features // 2
+        self.upsample2 = torch.nn.ConvTranspose2d(input_features, 2, 3, stride=2, padding=1)
+
+    def forward(self, x):
+        x = self.upsample1(x, output_size=[100, 100])
+        x = self.upsample2(x, output_size=[200, 200])
+        x = self.upsample3(x, output_size=[401, 401])
+        return x
+
 
 class CompositeField(torch.nn.Module):
     dropout_p = 0.0

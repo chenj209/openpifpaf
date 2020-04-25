@@ -40,11 +40,7 @@ class Shell(torch.nn.Module):
         ]
         self.process_heads = process_heads
         self.cross_talk = cross_talk
-        # self.decoder = heads.CompositeField('MidRangeOffsetDecoder', n_features,
-        #                       n_fields=n_fields,
-        #                       n_confidences=1,
-        #                       n_vectors=n_vectors,
-        #                       n_scales=n_scales)
+        self.decoder = heads.MidRangeOffsetDecoder(head_names)
 
     def forward(self, *args):
         image_batch = args[0]
@@ -72,8 +68,9 @@ class Shell(torch.nn.Module):
                 else:
                     print(f"Unexpected output shape {output.shape}")
         merged_head_outputs = torch.cat(merged_results, dim=3).permute(0, 2, 3, 1)
+        predicted_alignment = self.decoder(merged_head_outputs)
 
-        return head_outputs
+        return head_outputs + [predicted_alignment]
 
 class DecoderShell(torch.nn.Module):
     pass
