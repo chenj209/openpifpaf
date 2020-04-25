@@ -52,6 +52,7 @@ class Shell(torch.nn.Module):
         x = self.base_net(image_batch)
         head_outputs = [hn(x) for hn in self.head_nets]
 
+        import ipdb; ipdb.set_trace()
         if self.process_heads is not None:
             head_outputs = self.process_heads(*head_outputs)
 
