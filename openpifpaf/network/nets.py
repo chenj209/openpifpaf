@@ -52,7 +52,6 @@ class Shell(torch.nn.Module):
         x = self.base_net(image_batch)
         head_outputs = [hn(x) for hn in self.head_nets]
 
-        import ipdb; ipdb.set_trace()
         if self.process_heads is not None:
             head_outputs = self.process_heads(*head_outputs)
 
@@ -61,14 +60,14 @@ class Shell(torch.nn.Module):
             for output in outputs:
                 reshaped_output = None
                 if len(output.shape) == 4:
-                    reshaped_output = output.permute(0, 2, 3, 1).contiguous().view(64, 51, 51, -1)
+                    reshaped_output = output.permute(0, 2, 3, 1).contiguous().view(8, 51, 51, -1)
                 elif len(output.shape) == 5:
-                    reshaped_output = output.permute(0, 3, 4, 1, 2).contiguous().view(64, 51, 51, -1)
+                    reshaped_output = output.permute(0, 3, 4, 1, 2).contiguous().view(8, 51, 51, -1)
                 if reshaped_output is not None:
                     merged_results.append(reshaped_output)
                 else:
                     print(f"Unexpected output shape {output.shape}")
-        merged_head_outputs = torch.cat(merged_results, dim=3).permute(0, 2, 3, 1)
+        merged_head_outputs = torch.cat(merged_results, dim=3).permute(0, 3, 2, 1)
         predicted_alignment = self.decoder(merged_head_outputs)
 
         return head_outputs + [predicted_alignment]

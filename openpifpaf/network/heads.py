@@ -120,11 +120,11 @@ class MidRangeOffsetDecoder(torch.nn.Module):
         input_features = input_features // 2
         self.upsample2 = torch.nn.ConvTranspose2d(input_features, input_features // 2, 3, stride=2, padding=1)
         input_features = input_features // 2
-        self.upsample2 = torch.nn.ConvTranspose2d(input_features, 2, 3, stride=2, padding=1)
+        self.upsample3 = torch.nn.ConvTranspose2d(input_features, 2, 3, stride=2, padding=1)
 
     def forward(self, x):
-        x = self.upsample1(x, output_size=[100, 100])
-        x = self.upsample2(x, output_size=[200, 200])
+        x = self.upsample1(x, output_size=[101, 101])
+        x = self.upsample2(x, output_size=[201, 201])
         x = self.upsample3(x, output_size=[401, 401])
         return x
 
