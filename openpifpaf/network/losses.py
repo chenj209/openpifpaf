@@ -416,7 +416,8 @@ def factory(head_names, lambdas, *,
         reg_loss = laplace_loss
     else:
         raise Exception('unknown regression loss type {}'.format(reg_loss_name))
-
+    head_names.append('mro')
+    lambdas.extend([50, 4, 4])
     losses = [CompositeLoss(head_name, reg_loss,
                             margin=margin, **loss_parameters(head_name))
               for head_name in head_names]
