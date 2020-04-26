@@ -181,8 +181,10 @@ class MidRangeOffsetGenerator(object):
         #         continue
             # fxy = (fij - self.padding) + s_offset
         fxy = np.round(joint1[:2])
-        fminx, fminy = int(fxy[0] - s_offset), int(fxy[1] - s_offset)
-        fmaxx, fmaxy = fminx + s, fminy + s
+        fminx, fminy = max(0, int(fxy[0] - s_offset)), max(0, int(fxy[1] - s_offset))
+        h = self.fields_reg1.shape[2]
+        w = self.fields_reg1.shape[3]
+        fmaxx, fmaxy = min(fminx + s, w-1), min(fminy + s, h-1)
 
         # precise floating point offset of sinks
         # joint1_offset = (joint1[:2] - fxy).reshape(2, 1, 1)
