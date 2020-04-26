@@ -198,7 +198,7 @@ class MidRangeOffsetGenerator(object):
         #                     np.linalg.norm(sink2, axis=0))
         # mask = sink_l < self.fields_reg_l[i, fminy:fmaxy, fminx:fmaxx]
         # self.fields_reg1[i, :, int(fxy[1]), int(fxy[0])] = joint2_offset
-        self.fields_reg1[i, :, fminy:fmaxy, fminx:fmaxx] = sink
+        self.fields_reg1[i, :, fminy:fmaxy, fminx:fmaxx] = sink[:, 0: fmaxy-fminy, 0: fmaxx-fminx]
         # patch1[2:, mask] = max_r1
         # patch2 = self.fields_reg2[i, :, fminy:fmaxy, fminx:fmaxx]
         # patch2[:2, mask] = sink2[:, mask]
