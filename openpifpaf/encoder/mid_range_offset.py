@@ -154,10 +154,10 @@ class MidRangeOffsetGenerator(object):
         offset_d = np.linalg.norm(offset)
 
         # dynamically create s
-        s = min(self.min_size, int(offset_d * self.aspect_ratio))
+        s = max(self.min_size, int(offset_d * self.aspect_ratio))
         # s = max(s, min(int(scale1), int(scale2)))
         sink = create_sink(s)
-        s_offset = int(s/ 2.0)
+        s_offset = (s - 1.0) / 2.0
 
         # pixel coordinates of top-left joint pixel
         # joint1ij = np.round(joint1[:2] - s_offset)
@@ -181,7 +181,7 @@ class MidRangeOffsetGenerator(object):
         #         continue
             # fxy = (fij - self.padding) + s_offset
         fxy = np.round(joint1[:2])
-        fminx, fminy = int(fxy[0]) - s_offset, int(fxy[1]) - s_offset
+        fminx, fminy = int(fxy[0] - s_offset), int(fxy[1] - s_offset)
         fmaxx, fmaxy = fminx + s, fminy + s
 
         # precise floating point offset of sinks
