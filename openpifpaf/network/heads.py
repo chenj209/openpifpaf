@@ -4,6 +4,7 @@ import logging
 import re
 
 import torch
+import torch.nn.functional as F
 
 LOG = logging.getLogger(__name__)
 
@@ -124,10 +125,10 @@ class MidRangeOffsetDecoder(torch.nn.Module):
         self.upsample4 = torch.nn.ConvTranspose2d(input_features, n_fields * 2, 3, stride=2, padding=1)
 
     def forward(self, x):
-        x = self.upsample1(x, output_size=[101, 101])
-        x = self.upsample2(x, output_size=[201, 201])
-        class_x = self.upsample3(x, output_size=[401, 401])
-        reg_x = self.upsample4(x, output_size=[401, 401])
+        x = self.upsample1(F.relu(x), output_size=[101, 101])
+        x = self.upsample2(F.relu(x), output_size=[201, 201])
+        class_x = self.upsample3(F.relu(x), output_size=[401, 401])
+        reg_x = self.upsample4(F.relu(x), output_size=[401, 401])
         reg_x = reg_x.reshape(
             reg_x.shape[0],
             reg_x.shape[1] // 2,

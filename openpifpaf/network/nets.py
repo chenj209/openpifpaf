@@ -1,6 +1,7 @@
 import logging
 import torch
 import torchvision
+import numpy as np
 
 from . import basenetworks, heads
 from ..data import COCO_KEYPOINTS, COCO_PERSON_SKELETON, DENSER_COCO_PERSON_CONNECTIONS, HFLIP
@@ -56,21 +57,24 @@ class Shell(torch.nn.Module):
             head_outputs = self.process_heads(*head_outputs)
 
         merged_results = []
+        batch_size = head_outputs[0][0].shape[0]
+        h, w = head_outputs[0][0].shape[2], head_outputs[0][0].shape[3]
         for outputs in head_outputs:
             for output in outputs:
                 reshaped_output = None
                 if len(output.shape) == 4:
-                    reshaped_output = output.permute(0, 2, 3, 1).contiguous().view(4, 51, 51, -1)
+                    reshaped_output = output.permute(0, 2, 3, 1).contiguous().view(batch_size, h, w, -1)
                 elif len(output.shape) == 5:
-                    reshaped_output = output.permute(0, 3, 4, 1, 2).contiguous().view(4, 51, 51, -1)
+                    reshaped_output = output.permute(0, 3, 4, 1, 2).contiguous().view(batch_size, h, w, -1)
                 if reshaped_output is not None:
                     merged_results.append(reshaped_output)
                 else:
                     print(f"Unexpected output shape {output.shape}")
         merged_head_outputs = torch.cat(merged_results, dim=3).permute(0, 3, 2, 1)
         predicted_alignment = self.decoder(merged_head_outputs)
-        outputs = head_outputs + [predicted_alignment]
-        return outputs
+        # outputs = head_outputs + [predicted_alignment]
+        # return outputs
+        return head_outputs
 
 class DecoderShell(torch.nn.Module):
     pass
