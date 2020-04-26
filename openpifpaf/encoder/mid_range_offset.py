@@ -154,10 +154,10 @@ class MidRangeOffsetGenerator(object):
         offset_d = np.linalg.norm(offset)
 
         # dynamically create s
-        # s = min(self.min_size, int(offset_d * self.aspect_ratio))
+        s = max(self.min_size, int(offset_d * self.aspect_ratio))
         # s = max(s, min(int(scale1), int(scale2)))
-        # sink = create_sink(s)
-        # s_offset = int(s/ 2.0)
+        sink = create_sink(s)
+        s_offset = (s - 1.0) / 2.0
 
         # pixel coordinates of top-left joint pixel
         # joint1ij = np.round(joint1[:2] - s_offset)
@@ -181,25 +181,26 @@ class MidRangeOffsetGenerator(object):
         #         continue
             # fxy = (fij - self.padding) + s_offset
         fxy = np.round(joint1[:2])
-        # fminx, fminy = int(fxy[0]) - s_offset, int(fxy[1]) - s_offset
-        # fmaxx, fmaxy = fminx + s, fminy + s
+        fminx, fminy = max(0, int(fxy[0] - s_offset)), max(0, int(fxy[1] - s_offset))
+        h = self.fields_reg1.shape[2]
+        w = self.fields_reg1.shape[3]
+        fmaxx, fmaxy = min(fminx + s, w-1), min(fminy + s, h-1)
 
         # precise floating point offset of sinks
         # joint1_offset = (joint1[:2] - fxy).reshape(2, 1, 1)
-        joint2_offset = (np.round(joint2[:2]) - fxy)
+        joint2_offset = (np.round(joint2[:2]) - fxy).reshape(2, 1, 1)
 
         # update intensity
-        self.intensities[i, int(fxy[1]), int(fxy[0])] = 1.0
+        self.intensities[i, fminy:fmaxy, fminx:fmaxx] = 1.0
 
         # update regressions
-        # sink1 = sink + joint1_offset
+        sink = sink + joint2_offset
         # sink2 = sink + joint2_offset
         # sink_l = np.linalg.norm(sink2, axis=0)
         #                     np.linalg.norm(sink2, axis=0))
         # mask = sink_l < self.fields_reg_l[i, fminy:fmaxy, fminx:fmaxx]
-        self.fields_reg1[i, :, int(fxy[1]), int(fxy[0])] = joint2_offset
-        # patch1 = self.fields_reg1[i, :, fminy:fmaxy, fminx:fmaxx]
-        # patch1[:2, mask] = sink2[:, mask]
+        # self.fields_reg1[i, :, int(fxy[1]), int(fxy[0])] = joint2_offset
+        self.fields_reg1[i, :, fminy:fmaxy, fminx:fmaxx] = sink[:, 0: fmaxy-fminy, 0: fmaxx-fminx]
         # patch1[2:, mask] = max_r1
         # patch2 = self.fields_reg2[i, :, fminy:fmaxy, fminx:fmaxx]
         # patch2[:2, mask] = sink2[:, mask]

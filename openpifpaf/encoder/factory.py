@@ -47,6 +47,8 @@ def factory_heads(headnames, strides):
                 for head_name, stride in zip(headnames, strides)]
     if headnames[-1] == 'skeleton' and len(headnames) == len(strides) + 1:
         encoders.append(Skeleton())
+    # custom mod for mid range offset
+    encoders.append(factory_head('mro', 3))
     return encoders
 
 
@@ -54,7 +56,8 @@ def factory_head(head_name, stride):
     if head_name in ('pif',
                      'ppif',
                      'pifb',
-                     'pifs') or \
+                     'pifs',
+                     ) or \
        re.match('pif([0-9]+)$', head_name) is not None:
 
         m = re.match('pif([0-9]+)$', head_name)
@@ -89,5 +92,8 @@ def factory_head(head_name, stride):
 
         LOG.info('selected encoder Paf for %s', head_name)
         return Paf(stride, n_keypoints=n_keypoints, skeleton=skeleton, sigmas=COCO_PERSON_SIGMAS)
+
+    if head_name == 'mro':
+        return MidRangeOffset(stride, n_keypoints=17, skeleton=COCO_PERSON_SKELETON, sigmas=COCO_PERSON_SIGMAS)
 
     raise Exception('unknown head to create an encoder: {}'.format(head_name))

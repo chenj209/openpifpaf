@@ -4,6 +4,7 @@ import logging
 import re
 
 import torch
+import torch.nn.functional as F
 
 LOG = logging.getLogger(__name__)
 
@@ -104,6 +105,40 @@ class PafHFlip(torch.nn.Module):
             out[2][:, paf_i] = cc
 
         return out
+
+class MidRangeOffsetDecoder(torch.nn.Module):
+    def __init__(self, head_names, n_fields):
+        super(MidRangeOffsetDecoder, self).__init__()
+        input_features = 0
+        if head_names is None:
+            head_names = ['pif', 'paf']
+        for head_name in head_names:
+            if head_name == 'pif':
+                input_features += 17 * 5
+            elif head_name == 'paf':
+                input_features += 19 * 7
+        self.upsample1 = torch.nn.ConvTranspose2d(input_features, input_features // 2, 3, stride=2, padding=1)
+        input_features = input_features // 2
+        self.upsample2 = torch.nn.ConvTranspose2d(input_features, input_features // 2, 3, stride=2, padding=1)
+        input_features = input_features // 2
+        self.upsample3 = torch.nn.ConvTranspose2d(input_features, n_fields, 3, stride=2, padding=1)
+        self.upsample4 = torch.nn.ConvTranspose2d(input_features, n_fields * 2, 3, stride=2, padding=1)
+
+    def forward(self, x):
+        x = self.upsample1(F.relu(x), output_size=[101, 101])
+        x = self.upsample2(F.relu(x), output_size=[201, 201])
+        class_x = self.upsample3(F.relu(x), output_size=[401, 401])
+        reg_x = self.upsample4(F.relu(x), output_size=[401, 401])
+        reg_x = reg_x.reshape(
+            reg_x.shape[0],
+            reg_x.shape[1] // 2,
+            2,
+            reg_x.shape[2],
+            reg_x.shape[3]
+        )
+
+        # Here, target output size is n_fields * w * h and n_fields * 2 * w * h
+        return [class_x, reg_x]
 
 
 class CompositeField(torch.nn.Module):
