@@ -60,9 +60,9 @@ class Shell(torch.nn.Module):
             for output in outputs:
                 reshaped_output = None
                 if len(output.shape) == 4:
-                    reshaped_output = output.permute(0, 2, 3, 1).contiguous().view(8, 51, 51, -1)
+                    reshaped_output = output.permute(0, 2, 3, 1).contiguous().view(4, 51, 51, -1)
                 elif len(output.shape) == 5:
-                    reshaped_output = output.permute(0, 3, 4, 1, 2).contiguous().view(8, 51, 51, -1)
+                    reshaped_output = output.permute(0, 3, 4, 1, 2).contiguous().view(4, 51, 51, -1)
                 if reshaped_output is not None:
                     merged_results.append(reshaped_output)
                 else:

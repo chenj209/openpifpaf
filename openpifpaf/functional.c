@@ -5,7 +5,7 @@
     "distutils": {
         "depends": [],
         "include_dirs": [
-            "/Users/jiandachen/.virtualenvs/pifpaf/lib/python3.7/site-packages/numpy/core/include"
+            "/home/kindercjd/pifpaf/lib/python3.7/site-packages/numpy/core/include"
         ],
         "name": "openpifpaf.functional",
         "sources": [
