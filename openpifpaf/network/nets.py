@@ -72,9 +72,9 @@ class Shell(torch.nn.Module):
                     print(f"Unexpected output shape {output.shape}")
         merged_head_outputs = torch.cat(merged_results, dim=3).permute(0, 3, 2, 1)
         predicted_alignment = self.decoder(merged_head_outputs)
-        # outputs = head_outputs + [predicted_alignment]
-        # return outputs
-        return head_outputs
+        outputs = head_outputs + [predicted_alignment]
+        return outputs
+        # return head_outputs
 
 class DecoderShell(torch.nn.Module):
     pass
