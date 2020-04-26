@@ -35,7 +35,6 @@ paf \
 --ema=0.03 \
 --no-augmentation \
 ```
-python3 -m pip install --editable '.[train,test]'
 
 
 # Related Projects
